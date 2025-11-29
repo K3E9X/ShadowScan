@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shadowscan-prod
+  labels:
+    name: shadowscan-prod
+    environment: production

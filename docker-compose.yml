@@ -1,0 +1,148 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: shadowscan-postgres
+    environment:
+      POSTGRES_DB: shadowscan
+      POSTGRES_USER: shadowscan
+      POSTGRES_PASSWORD: shadowscan_secure_password_change_me
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shadowscan"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - shadowscan-network
+    restart: unless-stopped
+
+  # Redis Cache & Task Queue
+  redis:
+    image: redis:7-alpine
+    container_name: shadowscan-redis
+    command: redis-server --appendonly yes --requirepass shadowscan_redis_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - shadowscan-network
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shadowscan-backend
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://shadowscan:shadowscan_secure_password_change_me@postgres:5432/shadowscan
+      - REDIS_URL=redis://:shadowscan_redis_password@redis:6379/0
+      - CELERY_BROKER_URL=redis://:shadowscan_redis_password@redis:6379/1
+      - SECRET_KEY=your-secret-key-minimum-32-characters-long-change-this
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+      - DEBUG=true
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/storage:/app/storage
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - shadowscan-network
+    restart: unless-stopped
+
+  # Celery Worker (for async tasks)
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shadowscan-celery
+    command: celery -A app.tasks worker --loglevel=info --concurrency=4
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://shadowscan:shadowscan_secure_password_change_me@postgres:5432/shadowscan
+      - REDIS_URL=redis://:shadowscan_redis_password@redis:6379/0
+      - CELERY_BROKER_URL=redis://:shadowscan_redis_password@redis:6379/1
+      - SECRET_KEY=your-secret-key-minimum-32-characters-long-change-this
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend/app:/app/app
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - shadowscan-network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shadowscan-frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - shadowscan-network
+    restart: unless-stopped
+
+  # NGINX Reverse Proxy (Production-ready)
+  nginx:
+    image: nginx:alpine
+    container_name: shadowscan-nginx
+    volumes:
+      - ./infrastructure/docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - shadowscan-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  shadowscan-network:
+    driver: bridge
