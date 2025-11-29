@@ -1,8 +1,12 @@
 # ShadowScan - AI-Powered Security Analysis Platform
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![CI/CD](https://github.com/shadowscan/shadowscan/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/shadowscan/shadowscan/actions)
+[![CI/CD](https://github.com/K3E9X/New-project/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/K3E9X/New-project/actions)
 [![Security Rating](https://img.shields.io/badge/security-A+-green.svg)](https://shadowscan.dev)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/K3E9X/New-project&project-name=shadowscan&repository-name=shadowscan&root-directory=frontend)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/K3E9X/New-project)
+
+> 🌐 **[LIVE DEMO](https://shadowscan.vercel.app)** | 📖 **[Documentation](DEPLOY.md)** | 🚀 **[Déploiement 1-Click](#-déploiement-rapide)**
 
 **ShadowScan** is a production-grade, AI-powered security analysis platform that provides comprehensive code security analysis and architecture diagram assessment using state-of-the-art AI models and security frameworks.
 
@@ -55,6 +59,42 @@ ShadowScan follows a microservices architecture built on modern, secure, and sca
 - **CI/CD**: GitHub Actions, automated security scanning
 
 For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## ⚡ Déploiement Rapide
+
+Déployez ShadowScan en production en quelques clics (100% GRATUIT) :
+
+### Option 1 : Vercel + Railway (Recommandé)
+
+**1. Frontend sur Vercel :**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/K3E9X/New-project&project-name=shadowscan&repository-name=shadowscan&root-directory=frontend)
+
+- Cliquez sur le bouton ci-dessus
+- Connectez votre compte GitHub
+- Vercel va automatiquement déployer le frontend
+- Variables requises : `NEXT_PUBLIC_API_URL` (sera configurée après Railway)
+
+**2. Backend sur Railway :**
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/K3E9X/New-project)
+
+- Cliquez sur le bouton ci-dessus
+- Railway va créer PostgreSQL + Redis automatiquement
+- Ajoutez votre `ANTHROPIC_API_KEY`
+- Copiez l'URL du backend et mettez-la dans Vercel (`NEXT_PUBLIC_API_URL`)
+
+✅ **Terminé !** Votre ShadowScan est en ligne sur `https://shadowscan.vercel.app`
+
+### Option 2 : Render (Tout-en-un)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/K3E9X/New-project)
+
+Un seul clic déploie frontend + backend + base de données !
+
+📖 **Guide détaillé** : [DEPLOY.md](DEPLOY.md)
+
+---
 
 ## 📋 Prerequisites
 
