@@ -1,5 +1,5 @@
 """
-SecuVision API - Main Application
+ShadowScan API - Main Application
 Production-grade FastAPI application for security analysis
 """
 
@@ -56,7 +56,7 @@ async def lifespan(app: FastAPI):
     """
     Application lifespan manager
     """
-    logger.info("Starting SecuVision API", version=settings.VERSION)
+    logger.info("Starting ShadowScan API", version=settings.VERSION)
 
     # Startup tasks
     # - Initialize database connection pool
@@ -66,14 +66,14 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown tasks
-    logger.info("Shutting down SecuVision API")
+    logger.info("Shutting down ShadowScan API")
     # - Close database connections
     # - Cleanup resources
 
 
 # Create FastAPI application
 app = FastAPI(
-    title="SecuVision API",
+    title="ShadowScan API",
     description="AI-Powered Security Analysis Platform API",
     version=settings.VERSION,
     docs_url="/api/docs" if settings.DEBUG else None,
@@ -197,7 +197,7 @@ async def root():
     Root endpoint with API information
     """
     return {
-        "name": "SecuVision API",
+        "name": "ShadowScan API",
         "version": settings.VERSION,
         "description": "AI-Powered Security Analysis Platform",
         "docs": "/api/docs" if settings.DEBUG else None

@@ -11,7 +11,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'SecuVision - AI-Powered Security Analysis Platform',
+  title: 'ShadowScan - AI-Powered Security Analysis Platform',
   description:
     'Comprehensive code security analysis and architecture diagram assessment using AI. Detect vulnerabilities, analyze architectures, and get secure-by-design recommendations.',
   keywords: [
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     'Zero Trust',
     'secure-by-design'
   ],
-  authors: [{ name: 'SecuVision Team' }],
-  creator: 'SecuVision',
-  publisher: 'SecuVision',
+  authors: [{ name: 'ShadowScan Team' }],
+  creator: 'ShadowScan',
+  publisher: 'ShadowScan',
   robots: {
     index: true,
     follow: true
@@ -35,15 +35,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://secuvision.dev',
-    title: 'SecuVision - AI-Powered Security Analysis Platform',
+    url: 'https://shadowscan.dev',
+    title: 'ShadowScan - AI-Powered Security Analysis Platform',
     description:
       'Comprehensive code security analysis and architecture diagram assessment',
-    siteName: 'SecuVision'
+    siteName: 'ShadowScan'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SecuVision - AI-Powered Security Analysis Platform',
+    title: 'ShadowScan - AI-Powered Security Analysis Platform',
     description:
       'Comprehensive code security analysis and architecture diagram assessment'
   },

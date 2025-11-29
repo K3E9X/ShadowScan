@@ -1,7 +1,7 @@
 {
-  "name": "secuvision-frontend",
+  "name": "shadowscan-frontend",
   "version": "1.0.0",
-  "description": "SecuVision Security Analysis Platform - Frontend",
+  "description": "ShadowScan Security Analysis Platform - Frontend",
   "private": true,
   "scripts": {
     "dev": "next dev",

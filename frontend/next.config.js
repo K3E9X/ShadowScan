@@ -45,7 +45,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.secuvision.dev",
+              "connect-src 'self' https://api.shadowscan.dev",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'"
@@ -59,7 +59,7 @@ const nextConfig = {
   // Environment variables exposed to the browser
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-    NEXT_PUBLIC_APP_NAME: 'SecuVision',
+    NEXT_PUBLIC_APP_NAME: 'ShadowScan',
     NEXT_PUBLIC_APP_VERSION: '1.0.0'
   },
 

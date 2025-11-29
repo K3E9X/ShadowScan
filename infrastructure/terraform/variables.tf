@@ -15,7 +15,7 @@ variable "environment" {
 variable "project_name" {
   description = "Project name"
   type        = string
-  default     = "secuvision"
+  default     = "shadowscan"
 }
 
 variable "vpc_cidr" {

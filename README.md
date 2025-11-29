@@ -1,10 +1,10 @@
-# SecuVision - AI-Powered Security Analysis Platform
+# ShadowScan - AI-Powered Security Analysis Platform
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![CI/CD](https://github.com/secuvision/secuvision/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/secuvision/secuvision/actions)
-[![Security Rating](https://img.shields.io/badge/security-A+-green.svg)](https://secuvision.dev)
+[![CI/CD](https://github.com/shadowscan/shadowscan/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/shadowscan/shadowscan/actions)
+[![Security Rating](https://img.shields.io/badge/security-A+-green.svg)](https://shadowscan.dev)
 
-**SecuVision** is a production-grade, AI-powered security analysis platform that provides comprehensive code security analysis and architecture diagram assessment using state-of-the-art AI models and security frameworks.
+**ShadowScan** is a production-grade, AI-powered security analysis platform that provides comprehensive code security analysis and architecture diagram assessment using state-of-the-art AI models and security frameworks.
 
 ## 🚀 Features
 
@@ -31,7 +31,7 @@
 
 ## 🏗️ Architecture
 
-SecuVision follows a microservices architecture built on modern, secure, and scalable technologies:
+ShadowScan follows a microservices architecture built on modern, secure, and scalable technologies:
 
 ```
 ┌─────────────┐      ┌──────────────┐      ┌─────────────┐
@@ -70,8 +70,8 @@ For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITE
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/secuvision.git
-cd secuvision
+git clone https://github.com/yourusername/shadowscan.git
+cd shadowscan
 ```
 
 ### 2. Set Up Environment Variables
@@ -84,10 +84,10 @@ ANTHROPIC_API_KEY=your_anthropic_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 
 # Database
-DATABASE_URL=postgresql+asyncpg://secuvision:secuvision_password@postgres:5432/secuvision
+DATABASE_URL=postgresql+asyncpg://shadowscan:shadowscan_password@postgres:5432/shadowscan
 
 # Redis
-REDIS_URL=redis://:secuvision_redis_password@redis:6379/0
+REDIS_URL=redis://:shadowscan_redis_password@redis:6379/0
 
 # Security
 SECRET_KEY=your-super-secret-key-at-least-32-characters-long
@@ -216,7 +216,7 @@ cd backend
 bandit -r app/
 
 # Run Trivy (containers)
-trivy image secuvision/backend:latest
+trivy image shadowscan/backend:latest
 ```
 
 ## 🚀 Production Deployment
@@ -228,19 +228,19 @@ trivy image secuvision/backend:latest
 kubectl apply -f infrastructure/kubernetes/namespace.yaml
 
 # Create secrets (update with your values)
-kubectl create secret generic secuvision-secrets \
+kubectl create secret generic shadowscan-secrets \
   --from-literal=database-url='postgresql://...' \
   --from-literal=redis-url='redis://...' \
   --from-literal=secret-key='...' \
   --from-literal=anthropic-api-key='...' \
-  -n secuvision-prod
+  -n shadowscan-prod
 
 # Deploy application
-kubectl apply -f infrastructure/kubernetes/ -n secuvision-prod
+kubectl apply -f infrastructure/kubernetes/ -n shadowscan-prod
 
 # Verify deployment
-kubectl get pods -n secuvision-prod
-kubectl get svc -n secuvision-prod
+kubectl get pods -n shadowscan-prod
+kubectl get svc -n shadowscan-prod
 ```
 
 ### Terraform Deployment (AWS)
@@ -320,7 +320,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 ### Vulnerability Disclosure
 
-If you discover a security vulnerability, please email security@secuvision.dev. Do not open public issues for security vulnerabilities.
+If you discover a security vulnerability, please email security@shadowscan.dev. Do not open public issues for security vulnerabilities.
 
 ## 📄 License
 
@@ -336,13 +336,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Documentation**: [https://docs.secuvision.dev](https://docs.secuvision.dev)
-- **Email**: support@secuvision.dev
-- **Issues**: [GitHub Issues](https://github.com/yourusername/secuvision/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/secuvision/discussions)
+- **Documentation**: [https://docs.shadowscan.dev](https://docs.shadowscan.dev)
+- **Email**: support@shadowscan.dev
+- **Issues**: [GitHub Issues](https://github.com/yourusername/shadowscan/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/shadowscan/discussions)
 
 ---
 
 **Built with ❤️ for the security community**
 
-*SecuVision - Securing your code and infrastructure with AI intelligence*
+*ShadowScan - Securing your code and infrastructure with AI intelligence*

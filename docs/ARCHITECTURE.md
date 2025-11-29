@@ -1,8 +1,8 @@
-# SecuVision Platform - System Architecture
+# ShadowScan Platform - System Architecture
 
 ## Executive Summary
 
-SecuVision is a production-grade security analysis platform that provides automated code security analysis and architecture diagram assessment using AI-powered analysis engines. Built on Zero Trust principles and following security-by-design methodology.
+ShadowScan is a production-grade security analysis platform that provides automated code security analysis and architecture diagram assessment using AI-powered analysis engines. Built on Zero Trust principles and following security-by-design methodology.
 
 ## Architecture Overview
 
@@ -292,7 +292,7 @@ CREATE INDEX idx_audit_log_created_at ON audit_log(created_at);
 
 **Kubernetes Architecture:**
 ```
-├── Namespace: secuvision-prod
+├── Namespace: shadowscan-prod
 │   ├── Deployment: frontend (3 replicas)
 │   ├── Deployment: backend (5 replicas)
 │   ├── Deployment: celery-worker (10 replicas)
@@ -560,5 +560,5 @@ Manual Approval → Deploy to Production → Smoke Tests
 
 **Document Version:** 1.0
 **Last Updated:** 2025-11-29
-**Author:** SecuVision Platform Team
+**Author:** ShadowScan Platform Team
 **Classification:** Internal Use

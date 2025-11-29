@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: secuvision-prod
+  namespace: shadowscan-prod
   labels:
     app: backend
     tier: api
@@ -23,7 +23,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: backend
-        image: secuvision/backend:latest
+        image: shadowscan/backend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
@@ -33,27 +33,27 @@ spec:
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
-              name: secuvision-secrets
+              name: shadowscan-secrets
               key: database-url
         - name: REDIS_URL
           valueFrom:
             secretKeyRef:
-              name: secuvision-secrets
+              name: shadowscan-secrets
               key: redis-url
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: secuvision-secrets
+              name: shadowscan-secrets
               key: secret-key
         - name: ANTHROPIC_API_KEY
           valueFrom:
             secretKeyRef:
-              name: secuvision-secrets
+              name: shadowscan-secrets
               key: anthropic-api-key
         - name: OPENAI_API_KEY
           valueFrom:
             secretKeyRef:
-              name: secuvision-secrets
+              name: shadowscan-secrets
               key: openai-api-key
               optional: true
         - name: ENVIRONMENT
@@ -96,7 +96,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: backend
-  namespace: secuvision-prod
+  namespace: shadowscan-prod
   labels:
     app: backend
 spec:
@@ -113,7 +113,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: backend-hpa
-  namespace: secuvision-prod
+  namespace: shadowscan-prod
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

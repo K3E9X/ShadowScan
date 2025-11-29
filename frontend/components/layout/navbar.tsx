@@ -9,7 +9,7 @@ export function Navbar() {
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">SecuVision</span>
+            <span className="text-xl font-bold">ShadowScan</span>
           </Link>
 
           <nav className="hidden md:flex gap-6">

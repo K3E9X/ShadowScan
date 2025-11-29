@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     )
 
     # Application
-    APP_NAME: str = "SecuVision"
+    APP_NAME: str = "ShadowScan"
     VERSION: str = "1.0.0"
     DEBUG: bool = False
     ENVIRONMENT: str = Field(default="production", pattern="^(development|staging|production)$")
@@ -50,7 +50,7 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str = Field(
-        default="postgresql+asyncpg://secuvision:secuvision@localhost:5432/secuvision"
+        default="postgresql+asyncpg://shadowscan:shadowscan@localhost:5432/shadowscan"
     )
     DB_ECHO: bool = False
     DB_POOL_SIZE: int = 10

@@ -9,7 +9,7 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Shield className="h-5 w-5 text-primary" />
-              <span className="font-bold">SecuVision</span>
+              <span className="font-bold">ShadowScan</span>
             </div>
             <p className="text-sm text-muted-foreground">
               AI-powered security analysis platform for code and architecture diagrams.
@@ -104,7 +104,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} SecuVision. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} ShadowScan. All rights reserved.</p>
         </div>
       </div>
     </footer>

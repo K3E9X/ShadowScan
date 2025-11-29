@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: secuvision-prod
+  name: shadowscan-prod
   labels:
-    name: secuvision-prod
+    name: shadowscan-prod
     environment: production

@@ -1,5 +1,5 @@
-# SecuVision Infrastructure - AWS
-# Terraform configuration for deploying SecuVision to AWS
+# ShadowScan Infrastructure - AWS
+# Terraform configuration for deploying ShadowScan to AWS
 
 terraform {
   required_version = ">= 1.6.0"
@@ -20,11 +20,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "secuvision-terraform-state"
+    bucket         = "shadowscan-terraform-state"
     key            = "production/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    dynamodb_table = "secuvision-terraform-locks"
+    dynamodb_table = "shadowscan-terraform-locks"
   }
 }
 
@@ -33,7 +33,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "SecuVision"
+      Project     = "ShadowScan"
       Environment = var.environment
       ManagedBy   = "Terraform"
     }
@@ -148,8 +148,8 @@ module "rds" {
   storage_encrypted     = true
   kms_key_id           = aws_kms_key.rds.arn
 
-  db_name  = "secuvision"
-  username = "secuvision"
+  db_name  = "shadowscan"
+  username = "shadowscan"
   port     = 5432
 
   multi_az               = true
