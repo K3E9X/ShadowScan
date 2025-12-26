@@ -1,6 +1,6 @@
 """
 Diagram Analyzer Service
-AI-powered architecture diagram analysis using vision models
+AI-powered architecture diagram analysis using Ollama LLaVA (Local & Free)
 """
 
 import uuid
@@ -8,29 +8,24 @@ import base64
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 import structlog
-from anthropic import AsyncAnthropic
-from openai import AsyncOpenAI
 
 from app.core.config import settings
 from app.services.prompts import DIAGRAM_ANALYSIS_PROMPT
+from app.services.ollama_service import OllamaService
 
 logger = structlog.get_logger(__name__)
 
 
 class DiagramAnalyzerService:
     """
-    Service for analyzing architecture diagrams using AI vision models
+    Service for analyzing architecture diagrams using Ollama LLaVA vision model
     """
 
     def __init__(self):
-        self.anthropic_client = None
-        self.openai_client = None
-
-        if settings.ANTHROPIC_API_KEY:
-            self.anthropic_client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-
-        if settings.OPENAI_API_KEY:
-            self.openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        self.ollama = OllamaService(
+            base_url=settings.OLLAMA_BASE_URL,
+            model=settings.OLLAMA_MODEL_VISION
+        )
 
     async def analyze(
         self,
@@ -39,7 +34,7 @@ class DiagramAnalyzerService:
         content_type: str
     ) -> Dict[str, Any]:
         """
-        Perform security analysis on architecture diagram
+        Perform security analysis on architecture diagram using Ollama LLaVA
 
         Args:
             file_content: Image file bytes
@@ -51,7 +46,7 @@ class DiagramAnalyzerService:
         """
         try:
             logger.info(
-                "Starting diagram analysis",
+                "Starting diagram analysis with Ollama LLaVA",
                 filename=filename,
                 content_type=content_type
             )
@@ -59,14 +54,14 @@ class DiagramAnalyzerService:
             # Generate analysis ID
             analysis_id = str(uuid.uuid4())
 
-            # Convert image to base64 for vision API
+            # Convert image to base64 for Ollama
             image_b64 = base64.b64encode(file_content).decode('utf-8')
 
             # Build prompt
             prompt = DIAGRAM_ANALYSIS_PROMPT
 
-            # Call AI vision model
-            ai_response = await self._call_vision_model(prompt, image_b64, content_type)
+            # Call Ollama vision model
+            ai_response = await self._call_vision_model(prompt, image_b64)
 
             # Parse AI response
             results = self._parse_ai_response(ai_response)
@@ -79,7 +74,8 @@ class DiagramAnalyzerService:
                     "filename": filename,
                     "file_size": len(file_content),
                     "content_type": content_type,
-                    "analyzer_version": "1.0.0"
+                    "analyzer_version": "1.0.0",
+                    "ai_model": settings.OLLAMA_MODEL_VISION
                 }
             })
 
@@ -92,81 +88,27 @@ class DiagramAnalyzerService:
     async def _call_vision_model(
         self,
         prompt: str,
-        image_b64: str,
-        content_type: str
+        image_b64: str
     ) -> str:
         """
-        Call AI vision model (Claude Vision or GPT-4 Vision)
+        Call Ollama LLaVA vision model
         """
         try:
-            if self.anthropic_client:
-                logger.debug("Using Claude Vision for analysis")
+            logger.debug("Using Ollama LLaVA for diagram analysis")
 
-                # Map content type to media type
-                media_type_map = {
-                    "image/png": "image/png",
-                    "image/jpeg": "image/jpeg",
-                    "image/jpg": "image/jpeg",
-                    "image/svg+xml": "image/png"  # Convert SVG to PNG first
-                }
+            # System prompt for architecture analysis
+            system_prompt = """You are an expert security architect specializing in Zero Trust architecture,
+Secure-by-Design principles, and infrastructure security. You have deep knowledge of cloud security,
+network segmentation, and compliance frameworks. Analyze architecture diagrams thoroughly and provide
+detailed, actionable security findings in JSON format."""
 
-                media_type = media_type_map.get(content_type, "image/png")
+            response = await self.ollama.generate_with_vision(
+                prompt=prompt,
+                image_data=image_b64,
+                system_prompt=system_prompt
+            )
 
-                response = await self.anthropic_client.messages.create(
-                    model=settings.AI_MODEL_VISION,
-                    max_tokens=settings.AI_MAX_TOKENS,
-                    temperature=settings.AI_TEMPERATURE,
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "image",
-                                    "source": {
-                                        "type": "base64",
-                                        "media_type": media_type,
-                                        "data": image_b64
-                                    }
-                                },
-                                {
-                                    "type": "text",
-                                    "text": prompt
-                                }
-                            ]
-                        }
-                    ]
-                )
-                return response.content[0].text
-
-            elif self.openai_client:
-                logger.debug("Using GPT-4 Vision for analysis")
-
-                response = await self.openai_client.chat.completions.create(
-                    model="gpt-4-vision-preview",
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": prompt
-                                },
-                                {
-                                    "type": "image_url",
-                                    "image_url": {
-                                        "url": f"data:{content_type};base64,{image_b64}"
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    max_tokens=settings.AI_MAX_TOKENS,
-                    temperature=settings.AI_TEMPERATURE
-                )
-                return response.choices[0].message.content
-
-            else:
-                raise ValueError("No AI API key configured")
+            return response
 
         except Exception as e:
             logger.error("Vision model call failed", error=str(e))
