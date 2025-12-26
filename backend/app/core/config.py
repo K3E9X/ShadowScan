@@ -64,13 +64,16 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
 
-    # AI Services
-    ANTHROPIC_API_KEY: Optional[str] = None
-    OPENAI_API_KEY: Optional[str] = None
-    AI_MODEL_CODE: str = "claude-3-5-sonnet-20241022"
-    AI_MODEL_VISION: str = "claude-3-5-sonnet-20241022"
+    # AI Services - Ollama (Local & Free)
+    OLLAMA_BASE_URL: str = "http://ollama:11434"
+    OLLAMA_MODEL_CODE: str = "llama3.1:8b"  # For code analysis
+    OLLAMA_MODEL_VISION: str = "llava:13b"  # For diagram analysis
     AI_MAX_TOKENS: int = 4096
     AI_TEMPERATURE: float = 0.1
+
+    # Legacy API keys (optional, Ollama is default)
+    ANTHROPIC_API_KEY: Optional[str] = None
+    OPENAI_API_KEY: Optional[str] = None
 
     # File Upload
     MAX_UPLOAD_SIZE: int = 50 * 1024 * 1024  # 50MB

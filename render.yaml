@@ -1,0 +1,51 @@
+services:
+  # Backend API
+  - type: web
+    name: shadowscan-backend
+    runtime: python
+    plan: free
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shadowscan-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: shadowscan-redis
+          type: redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://shadowscan.vercel.app
+    healthCheckPath: /health
+
+  # Frontend (Static Site)
+  - type: web
+    name: shadowscan-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build && npm run export
+    staticPublishPath: frontend/out
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: shadowscan-backend
+          type: web
+          property: host
+
+databases:
+  - name: shadowscan-db
+    plan: free
+    databaseName: shadowscan
+    user: shadowscan
+
+  - name: shadowscan-redis
+    plan: free

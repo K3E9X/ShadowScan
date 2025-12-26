@@ -1,6 +1,6 @@
 """
 Code Analyzer Service
-AI-powered code security analysis using Claude/GPT
+AI-powered code security analysis using Ollama (Local & Free)
 """
 
 import uuid
@@ -8,8 +8,6 @@ import hashlib
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 import structlog
-from anthropic import AsyncAnthropic
-from openai import AsyncOpenAI
 
 from app.core.config import settings
 from app.schemas.analysis import (
@@ -22,24 +20,22 @@ from app.schemas.analysis import (
     Secret
 )
 from app.services.prompts import CODE_ANALYSIS_PROMPT
+from app.services.ollama_service import OllamaService
 
 logger = structlog.get_logger(__name__)
 
 
 class CodeAnalyzerService:
     """
-    Service for analyzing code security using AI models
+    Service for analyzing code security using Ollama (local LLM)
     """
 
     def __init__(self):
-        self.anthropic_client = None
-        self.openai_client = None
-
-        if settings.ANTHROPIC_API_KEY:
-            self.anthropic_client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-
-        if settings.OPENAI_API_KEY:
-            self.openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        # Use Ollama instead of paid APIs
+        self.ollama = OllamaService(
+            base_url=settings.OLLAMA_BASE_URL,
+            model=settings.OLLAMA_MODEL_CODE
+        )
 
     async def analyze(
         self,
@@ -48,7 +44,7 @@ class CodeAnalyzerService:
         filename: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Perform comprehensive security analysis on code
+        Perform comprehensive security analysis on code using Ollama
 
         Args:
             code: Source code to analyze
@@ -59,7 +55,7 @@ class CodeAnalyzerService:
             Analysis results with vulnerabilities, secrets, and recommendations
         """
         try:
-            logger.info("Starting code analysis", language=language)
+            logger.info("Starting code analysis with Ollama", language=language)
 
             # Generate analysis ID
             analysis_id = str(uuid.uuid4())
@@ -67,8 +63,8 @@ class CodeAnalyzerService:
             # Build prompt
             prompt = self._build_analysis_prompt(code, language, filename)
 
-            # Call AI model
-            ai_response = await self._call_ai_model(prompt)
+            # Call Ollama model
+            ai_response = await self._call_ollama_model(prompt)
 
             # Parse AI response
             parsed_results = self._parse_ai_response(ai_response)
@@ -87,7 +83,8 @@ class CodeAnalyzerService:
                 "metadata": {
                     "code_hash": hashlib.sha256(code.encode()).hexdigest(),
                     "lines_of_code": code.count('\n') + 1,
-                    "analyzer_version": "1.0.0"
+                    "analyzer_version": "1.0.0",
+                    "ai_model": settings.OLLAMA_MODEL_CODE
                 }
             })
 
@@ -112,50 +109,30 @@ class CodeAnalyzerService:
             filename=filename or "unknown"
         )
 
-    async def _call_ai_model(self, prompt: str) -> str:
+    async def _call_ollama_model(self, prompt: str) -> str:
         """
-        Call the configured AI model (Claude or GPT)
+        Call Ollama local LLM for analysis
         """
         try:
-            if self.anthropic_client:
-                logger.debug("Using Claude for analysis")
-                response = await self.anthropic_client.messages.create(
-                    model=settings.AI_MODEL_CODE,
-                    max_tokens=settings.AI_MAX_TOKENS,
-                    temperature=settings.AI_TEMPERATURE,
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ]
-                )
-                return response.content[0].text
+            logger.debug("Using Ollama for analysis")
 
-            elif self.openai_client:
-                logger.debug("Using GPT for analysis")
-                response = await self.openai_client.chat.completions.create(
-                    model="gpt-4-turbo-preview",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": "You are a security expert analyzing code for vulnerabilities."
-                        },
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ],
-                    temperature=settings.AI_TEMPERATURE,
-                    max_tokens=settings.AI_MAX_TOKENS
-                )
-                return response.choices[0].message.content
+            # System prompt for code security analysis
+            system_prompt = """You are an expert security analyst specializing in code security,
+vulnerability detection, and secure coding practices. You have deep knowledge of OWASP Top 10,
+CWE Top 25, and security frameworks. Analyze code thoroughly and provide detailed,
+actionable security findings in JSON format."""
 
-            else:
-                raise ValueError("No AI API key configured")
+            response = await self.ollama.generate(
+                prompt=prompt,
+                system_prompt=system_prompt,
+                temperature=settings.AI_TEMPERATURE,
+                max_tokens=settings.AI_MAX_TOKENS
+            )
+
+            return response
 
         except Exception as e:
-            logger.error("AI model call failed", error=str(e))
+            logger.error("Ollama model call failed", error=str(e))
             raise
 
     def _parse_ai_response(self, response: str) -> Dict[str, Any]:
